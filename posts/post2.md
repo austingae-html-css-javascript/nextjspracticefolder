@@ -1,5 +1,5 @@
 ---
-title: heljdkjslj
+title: About Me
 slug: about
 excerpt: This is Austin Gae's portfolio website to display his projects.
 coverImage: /images/profile.jpg
