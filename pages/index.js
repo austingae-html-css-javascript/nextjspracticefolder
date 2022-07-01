@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
+
 import styles from '../styles/Home.module.css'
 
 import fs from 'fs';
@@ -9,42 +11,58 @@ import ReactMarkdown from 'react-markdown'
 
 import Post from '../components/post';
 
-export default function Home({postsContents}) {
+export default function Home( {posts} ) {
+  
+
   return (
-    <div className={styles.container}>
-      <main>
-        {postsContents.map((post) => {
+    <main>
+      <div className={styles.postspage}>
+        {posts.map((post) => {
+          console.log(post);
           return (
-            <>
-             <div>
-                <h1>{post.data.title}</h1>
-                <p>{post.data.excerpt}</p>
-                <p>{post.content}</p>
-             </div>
-            </>
-          )
+            <div className={styles.post}>
+              <Image 
+                className='post__image'
+                src = {post.data.coverImage}
+                width = {200}
+                height = {200}
+              />
+              <h3 className={styles.post__title}>{post.data.title}</h3>
+              <p className={styles.post__excerpt}>{post.data.excerpt}</p>
+              <button>
+                <Link href={`${encodeURIComponent(post.data.slug)}`}>
+                  <a>Read More</a>
+                </Link>
+              </button>
+            </div>
+          );
         })}
-      </main>
-    </div>
+      </div>
+    </main>
   )
 }
 
 export async function getStaticProps() {
-  console.log("------");
-
   const files = fs.readdirSync('posts');
-  const postsContents = files.map(file => {
-    const rawFile = fs.readFileSync(path.join('posts', file), 'utf-8');
-    const fileObject = matter(rawFile);
-    return fileObject;
+  const posts = files.map((file) => {
+    let rawPost = fs.readFileSync(path.join('posts', file), 'utf-8');
+    let postObject = matter(rawPost);
+    return postObject;
   })
+  
 
-  //console.log(postsContents); //one array with objects. I AM CORRECT!
-
+ {/*
+ ANOTHER WAY TO DO IT: 
+  const posts = [];
+  files.forEach(file => {
+    let rawPost = fs.readFileSync(path.join('posts', file), 'utf-8');
+    let postObject = matter(rawPost);
+    posts.push(postObject);
+  })*/}
 
   return {
     props: { 
-      postsContents: JSON.parse(JSON.stringify(postsContents)),
+      posts: JSON.parse(JSON.stringify(posts)),
     } 
   }
 }
